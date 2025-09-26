@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot - Caso Lívia Andrade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #111;
+            color: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .chat-container {
+            width: 100%;
+            max-width: 900px;
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            border: 1px solid #333;
+        }
+        
+        .chat-header {
+            background-color: #111;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #e74c3c; /* Vermelho */
+        }
+        
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #f1f1f1;
+        }
+        
+        .chat-header p {
+            font-size: 14px;
+            opacity: 0.8;
+            color: #ccc;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #181818;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(to right, #ffc107, #e0a800); /* Amarelo */
+            color: #111;
+            font-weight: 500;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            align-self: flex-start;
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+            border: 1px solid #444;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: #111;
+            border-top: 1px solid #333;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #555;
+            background-color: #2c2c2c;
+            color: white;
+            border-radius: 24px;
+            outline: none;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .chat-input input:focus {
+            border-color: #ffc107; /* Amarelo */
+        }
+        
+        .chat-input button {
+            background: #e74c3c; /* Vermelho */
+            color: white;
+            border: none;
+            padding: 0 20px;
+            margin-left: 10px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .chat-input button:hover {
+            transform: scale(1.05);
+            background: #c0392b; /* Vermelho mais escuro */
+        }
+        
+        .suggested-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px;
+            background-color: #222;
+            border-top: 1px solid #444;
+        }
+        
+        .suggested-question {
+            background-color: #ffc107; /* Amarelo */
+            color: #111;
+            font-weight: 500;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .suggested-question:hover {
+            background-color: #e0a800; /* Amarelo mais escuro */
+            transform: translateY(-2px);
+        }
+        
+        .timestamp {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 5px;
+            text-align: right;
+            color: #ccc;
+        }
+
+        .user-message .timestamp {
+             color: #333;
+             opacity: 0.7;
+        }
+        
+        .bot-avatar {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(to right, #e74c3c, #c0392b); /* Vermelho */
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        
+        .important {
+            border-left: 4px solid #e74c3c; /* Vermelho */
+            padding-left: 10px;
+            background-color: rgba(231, 76, 60, 0.1); /* Fundo avermelhado sutil */
+        }
+        
+        @media (max-width: 600px) {
+            .chat-container {
+                height: 95vh;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .suggested-questions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Delegado Responsável - Caso Lívia Andrade</h1>
+            <p>Estou à disposição para esclarecer o resultado da investigação do assassinato da vereadora</p>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                <span class="bot-avatar">D</span>
+                Boa tarde. Sou o delegado responsável pelo caso do assassinato da vereadora Lívia Andrade. A investigação foi concluída e posso fornecer todos os detalhes. Como posso ajudá-lo?
+            </div>
+            <div class="message bot-message important">
+                <span class="bot-avatar">D</span>
+                <strong>Resumo inicial:</strong> O caso envolve o assassinato da vereadora Lívia Andrade e seu motorista Paulo Gomes em 22/09/2025, um crime de grande repercussão com executores já identificados e condenados.
+            </div>
+        </div>
+        
+        <div class="suggested-questions" id="suggestedQuestions">
+            <div class="suggested-question" data-question="Quem são os culpados pelo crime?">Quem são os culpados?</div>
+            <div class="suggested-question" data-question="Qual foi o motivo do assassinato?">Motivo do crime</div>
+            <div class="suggested-question" data-question="Quais foram as provas decisivas?">Provas decisivas</div>
+            <div class="suggested-question" data-question="Qual foi a sentença?">Sentença do caso</div>
+            <div class="suggested-question" data-question="Quem foram os mandantes?">Mandantes do crime</div>
+        </div>
+        
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Digite sua pergunta sobre o caso Lívia Andrade...">
+            <button id="sendButton">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chatMessages');
+            const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendButton');
+            const suggestedQuestions = document.getElementById('suggestedQuestions');
+            
+            // Base de conhecimento completa sobre o caso Lívia Andrade
+            const knowledgeBase = {
+                "saudacao": "Boa tarde. Sou o delegado responsável pela investigação do assassinato da vereadora Lívia Andrade. A materialidade e autoria do crime foram completamente comprovadas. Em que posso ajudá-lo?",
+                
+                "culpados": "Os réus condenados são: 1) FELIPE LISBOA DE SOUZA - executor material do crime; 2) SANDRO LISBOA DE SOUZA - cúmplice na execução. Ambos foram incursos nas penas do Art. 121, § 2º, I, IV e V do Código Penal (Homicídio Qualificado).",
+                
+                "motivo": "O motivo foi torpe: silenciar a vereadora Lívia Andrade por suas denúncias contra o crime organizado. Ela investigava a construtora 'Rio Forte Empreendimentos', que tinha ligações com grupos paramilitares.",
+                
+                "provas": "As provas decisivas foram: 1) Dados de GPS que colocam Felipe Lisboa na cena do crime; 2) Laudo de Balística que conecta a arma a outros crimes de milícias; 3) Quebra de sigilo telemático com ligações suspeitas; 4) Relatório financeiro mostrando pagamentos da construtora aos réus.",
+                
+                "sentença": "Os réus foram condenados por homicídio qualificado (Art. 121, §2º, I, IV e V do CP). O caso será encaminhado ao Ministério Público e determinamos a extração de cópias para investigar os mandantes.",
+                
+                "mandantes": "Há fortes indícios contra: 1) VEREADOR MARCELO DIAS - rival político de Lívia, fez ligações aos réus antes/depois do crime; 2) CARLOS EDUARDO - dono da Construtora Rio Forte, fez pagamentos aos réus. A investigação dos mandantes continua.",
+                
+                "detalhes": "O crime ocorreu em 22/09/2025, às 21h15, no Méier. A vereadora Lívia Andrade e seu motorista Paulo Gomes foram executados com um fuzil de uso restrito. Foi uma emboscada planejada.",
+                
+                "investigação": "A investigação enfrentou tentativas de obstrução: 1) Delegado César Azevedo tentou direcionar para 'assalto'; 2) Fake News para manchar a reputação da vítima; 3) Intimidação de testemunhas.",
+                
+                "livia": "Lívia Andrade era vereadora e ativista de direitos humanos. Combatia violência policial e milícias. Investigava o condomínio irregular da Rio Forte Empreendimentos, com suspeitas de ligação miliciana.",
+                
+                "provasdetalhes": "PROVAS CONCRETAS: 1) Balística: mesma arma usada em crimes de milícias; 2) GPS: celular de Felipe no local do crime; 3) Ligações: Vereador Marcelo Dias contactou Felipe antes/depois do crime; 4) Financeiro: pagamentos da construtora aos réus.",
+                
+                "obstrução": "Tentativas de obstrução: 1) Delegado César Azevedo (direcionou investigação); 2) Matéria plantada em blog (fake news); 3) Testemunha intimidada (recuou no depoimento). Todas foram superadas pelas provas técnicas.",
+                
+                "conclusao": "A materialidade e autoria estão solidamente comprovadas. O álibi dos réus foi desconstituído pelo GPS. O motivo torpe (silenciar denúncias) ficou evidente. Os executores foram condenados e investigamos os mandantes.",
+                
+                "default": "Desculpe, não entendi sua pergunta. Pode reformular? Estou aqui para esclarecer sobre o caso do assassinato da vereadora Lívia Andrade."
+            };
+            
+            // Função para obter resposta com base na pergunta do usuário
+            function getBotResponse(userMessage) {
+                userMessage = userMessage.toLowerCase();
+                
+                if (userMessage.includes('oi') || userMessage.includes('olá') || userMessage.includes('boa')) {
+                    return knowledgeBase.saudacao;
+                } else if (userMessage.includes('culpado') || userMessage.includes('réu') || userMessage.includes('autor') || userMessage.includes('condenado')) {
+                    return knowledgeBase.culpados;
+                } else if (userMessage.includes('motivo') || userMessage.includes('porque') || userMessage.includes('razão') || userMessage.includes('causa')) {
+                    return knowledgeBase.motivo;
+                } else if (userMessage.includes('prova') || userMessage.includes('evidência') || userMessage.includes('concreto') || userMessage.includes('decisiva')) {
+                    return knowledgeBase.provas;
+                } else if (userMessage.includes('sentença') || userMessage.includes('pena') || userMessage.includes('condenação') || userMessage.includes('julgamento')) {
+                    return knowledgeBase.sentença;
+                } else if (userMessage.includes('mandante') || userMessage.includes('ordenou') || userMessage.includes('comando') || userMessage.includes('vereador') || userMessage.includes('marcelo')) {
+                    return knowledgeBase.mandantes;
+                } else if (userMessage.includes('detalhe') || userMessage.includes('como ocorreu') || userMessage.includes('crime')) {
+                    return knowledgeBase.detalhes;
+                } else if (userMessage.includes('investigação') || userMessage.includes('obstrução') || userMessage.includes('dificuldade')) {
+                    return knowledgeBase.obstrução;
+                } else if (userMessage.includes('lívia') || userMessage.includes('vítima') || userMessage.includes('vereadora')) {
+                    return knowledgeBase.livia;
+                } else if (userMessage.includes('conclusão') || userMessage.includes('resultado') || userMessage.includes('final')) {
+                    return knowledgeBase.conclusao;
+                } else {
+                    return knowledgeBase.default;
+                }
+            }
+            
+            // Função para adicionar mensagem do usuário
+            function addUserMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message user-message';
+                messageDiv.textContent = message;
+                
+                const timestamp = document.createElement('div');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = getCurrentTime();
+                
+                messageDiv.appendChild(timestamp);
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Função para adicionar mensagem do bot
+            function addBotMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot-message';
+                
+                const avatar = document.createElement('span');
+                avatar.className = 'bot-avatar';
+                avatar.textContent = 'D';
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(document.createTextNode(message));
+                
+                const timestamp = document.createElement('div');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = getCurrentTime();
+                
+                messageDiv.appendChild(timestamp);
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Função para obter hora atual
+            function getCurrentTime() {
+                const now = new Date();
+                return now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+            }
+            
+            // Função para processar a mensagem do usuário
+            function processUserMessage() {
+                const message = userInput.value.trim();
+                if (message) {
+                    addUserMessage(message);
+                    userInput.value = '';
+                    
+                    // Simular tempo de resposta do bot
+                    setTimeout(() => {
+                        const botResponse = getBotResponse(message);
+                        addBotMessage(botResponse);
+                    }, 800);
+                }
+            }
+            
+            // Event listeners
+            sendButton.addEventListener('click', processUserMessage);
+            
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    processUserMessage();
+                }
+            });
+            
+            // Event listener para perguntas sugeridas
+            suggestedQuestions.addEventListener('click', function(e) {
+                if (e.target.classList.contains('suggested-question')) {
+                    const question = e.target.getAttribute('data-question');
+                    userInput.value = question;
+                    processUserMessage();
+                }
+            });
+            
+            // Focar no input ao carregar a página
+            userInput.focus();
+        });
+    </script>
+</body>
+</html>
