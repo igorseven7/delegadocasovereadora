@@ -73,6 +73,7 @@
             position: relative;
             animation: fadeIn 0.3s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            white-space: pre-wrap; /* Garante a quebra de linha */
         }
         
         @keyframes fadeIn {
@@ -187,6 +188,7 @@
             line-height: 30px;
             margin-right: 8px;
             font-weight: bold;
+            float: left;
         }
         
         .important {
@@ -220,11 +222,11 @@
         <div class="chat-messages" id="chatMessages">
             <div class="message bot-message">
                 <span class="bot-avatar">D</span>
-                Boa tarde. Sou o delegado responsável pelo caso do assassinato da vereadora Lívia Andrade. A investigação foi concluída e posso fornecer todos os detalhes. Como posso ajudá-lo?
+                <span class="message-content">Boa tarde. Sou o delegado responsável pelo caso do assassinato da vereadora Lívia Andrade. A investigação foi concluída e posso fornecer todos os detalhes. Como posso ajudá-lo?</span>
             </div>
             <div class="message bot-message important">
                 <span class="bot-avatar">D</span>
-                <strong>Resumo inicial:</strong> O caso envolve o assassinato da vereadora Lívia Andrade e seu motorista Paulo Gomes em 22/09/2025, um crime de grande repercussão com executores já identificados e condenados.
+                <span class="message-content"><strong>Resumo inicial:</strong> O caso envolve o assassinato da vereadora Lívia Andrade e seu motorista Paulo Gomes em 22/09/2025, um crime de grande repercussão com executores já identificados e condenados.</span>
             </div>
         </div>
         
@@ -261,7 +263,7 @@
                 
                 "sentença": "O réu Felipe Lisboa de Souza foi condenado por homicídio qualificado (Art. 121, §2º, I, IV e V do CP).",
                 
-                "pessoas": "As principais pessoas no caso são:\n• LÍVIA ANDRADE (Vítima): Vereadora e alvo do crime.\n• PAULO GOMES (Vítima): Motorista da vereadora, assassinado junto a ela.\n• FELIPE LISBOA DE SOUZA (Condenado): Executor do assassinato.\n• VEREADOR MARCELO DIAS e EMPRESÁRIO CARLOS EDUARDO: Foram investigados por suspeita de serem mandantes, mas a ligação não foi comprovada pelas provas.",
+                "pessoas": "As principais pessoas ligadas ao caso são:\n\n• LÍVIA ANDRADE (Vítima): Vereadora e alvo principal do crime. Investigava a ligação entre uma construtora e o crime organizado.\n\n• PAULO GOMES (Vítima): Motorista de Lívia, também foi assassinado na emboscada.\n\n• A ASSESSORA (Testemunha-chave): Relatou as ameaças que a vereadora vinha sofrendo e ajudou a delinear as linhas de investigação.\n\n• FELIPE LISBOA DE SOUZA: Principal suspeito de ser o executor do crime, conectado à cena por provas técnicas.\n\n• SANDRO LISBOA DE SOUZA: Irmão de Felipe, investigado como cúmplice que teria dado apoio logístico na execução.\n\n• VEREADOR MARCELO DIAS: Adversário político de Lívia, que se tornou suspeito após a descoberta de ligações telefônicas para os executores.\n\n• EMPRESÁRIO CARLOS EDUARDO: Dono da construtora investigada por Lívia. Pagamentos de sua empresa aos irmãos Lisboa o ligaram ao caso.\n\n• DELEGADO CÉSAR AZEVEDO: Primeiro delegado do caso, afastado por suspeita de tentar obstruir a investigação, tratando-a como latrocínio.\n\n• TESTEMUNHA OCULAR (Morador de Rua): Testemunha que presenciou a fuga e deu a descrição do veículo utilizado pelos criminosos.\n\n• INFORMANTE ANÔNIMO: Pessoa que realizou uma ligação à polícia com a pista inicial que levou a investigação até os irmãos Lisboa.",
 
                 "detalhes": "O crime ocorreu em 22/09/2025, às 21h15, no Méier. A vereadora Lívia Andrade e seu motorista Paulo Gomes foram executados com um fuzil de uso restrito. Foi uma emboscada planejada.",
                 
@@ -311,8 +313,12 @@
             function addUserMessage(message) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message user-message';
-                messageDiv.textContent = message;
                 
+                const contentSpan = document.createElement('span');
+                contentSpan.className = 'message-content';
+                contentSpan.textContent = message;
+                messageDiv.appendChild(contentSpan);
+
                 const timestamp = document.createElement('div');
                 timestamp.className = 'timestamp';
                 timestamp.textContent = getCurrentTime();
@@ -330,18 +336,20 @@
                 const avatar = document.createElement('span');
                 avatar.className = 'bot-avatar';
                 avatar.textContent = 'D';
-                
                 messageDiv.appendChild(avatar);
-                // Usar innerHTML para interpretar quebras de linha como <br>
-                const messageContent = document.createElement('span');
-                messageContent.innerHTML = message.replace(/\n/g, '<br>');
-                messageDiv.appendChild(messageContent);
                 
+                const contentSpan = document.createElement('span');
+                contentSpan.className = 'message-content';
+                contentSpan.textContent = message;
+                messageDiv.appendChild(contentSpan);
+
                 const timestamp = document.createElement('div');
                 timestamp.className = 'timestamp';
                 timestamp.textContent = getCurrentTime();
                 
-                messageDiv.appendChild(timestamp);
+                // Adiciona o timestamp dentro da div da mensagem para melhor alinhamento
+                contentSpan.appendChild(timestamp);
+                
                 chatMessages.appendChild(messageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
