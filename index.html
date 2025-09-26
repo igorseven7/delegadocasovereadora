@@ -233,7 +233,7 @@
             <div class="suggested-question" data-question="Qual foi o motivo do assassinato?">Motivo do crime</div>
             <div class="suggested-question" data-question="Quais foram as provas decisivas?">Provas decisivas</div>
             <div class="suggested-question" data-question="Qual foi a sentença?">Sentença do caso</div>
-            <div class="suggested-question" data-question="Quem foram os mandantes?">Mandantes do crime</div>
+            <div class="suggested-question" data-question="Quem são as pessoas envolvidas no caso?">Pessoas envolvidas</div>
         </div>
         
         <div class="chat-input">
@@ -253,16 +253,16 @@
             const knowledgeBase = {
                 "saudacao": "Boa tarde. Sou o delegado responsável pela investigação do assassinato da vereadora Lívia Andrade. A materialidade e autoria do crime foram completamente comprovadas. Em que posso ajudá-lo?",
                 
-                "culpados": "Os réus condenados são: 1) FELIPE LISBOA DE SOUZA - executor material do crime; 2) SANDRO LISBOA DE SOUZA - cúmplice na execução. Ambos foram incursos nas penas do Art. 121, § 2º, I, IV e V do Código Penal (Homicídio Qualificado).",
+                "culpados": "O réu condenado como executor do crime é FELIPE LISBOA DE SOUZA. A investigação concluiu que ele agiu como o único executor, embora tenha tido apoio logístico. A participação de mandantes não foi comprovada.",
                 
                 "motivo": "O motivo foi torpe: silenciar a vereadora Lívia Andrade por suas denúncias contra o crime organizado. Ela investigava a construtora 'Rio Forte Empreendimentos', que tinha ligações com grupos paramilitares.",
                 
                 "provas": "As provas decisivas foram: 1) Dados de GPS que colocam Felipe Lisboa na cena do crime; 2) Laudo de Balística que conecta a arma a outros crimes de milícias; 3) Quebra de sigilo telemático com ligações suspeitas; 4) Relatório financeiro mostrando pagamentos da construtora aos réus.",
                 
-                "sentença": "Os réus foram condenados por homicídio qualificado (Art. 121, §2º, I, IV e V do CP). O caso será encaminhado ao Ministério Público e determinamos a extração de cópias para investigar os mandantes.",
+                "sentença": "O réu Felipe Lisboa de Souza foi condenado por homicídio qualificado (Art. 121, §2º, I, IV e V do CP).",
                 
-                "mandantes": "Há fortes indícios contra: 1) VEREADOR MARCELO DIAS - rival político de Lívia, fez ligações aos réus antes/depois do crime; 2) CARLOS EDUARDO - dono da Construtora Rio Forte, fez pagamentos aos réus. A investigação dos mandantes continua.",
-                
+                "pessoas": "As principais pessoas no caso são:\n• LÍVIA ANDRADE (Vítima): Vereadora e alvo do crime.\n• PAULO GOMES (Vítima): Motorista da vereadora, assassinado junto a ela.\n• FELIPE LISBOA DE SOUZA (Condenado): Executor do assassinato.\n• VEREADOR MARCELO DIAS e EMPRESÁRIO CARLOS EDUARDO: Foram investigados por suspeita de serem mandantes, mas a ligação não foi comprovada pelas provas.",
+
                 "detalhes": "O crime ocorreu em 22/09/2025, às 21h15, no Méier. A vereadora Lívia Andrade e seu motorista Paulo Gomes foram executados com um fuzil de uso restrito. Foi uma emboscada planejada.",
                 
                 "investigação": "A investigação enfrentou tentativas de obstrução: 1) Delegado César Azevedo tentou direcionar para 'assalto'; 2) Fake News para manchar a reputação da vítima; 3) Intimidação de testemunhas.",
@@ -273,7 +273,7 @@
                 
                 "obstrução": "Tentativas de obstrução: 1) Delegado César Azevedo (direcionou investigação); 2) Matéria plantada em blog (fake news); 3) Testemunha intimidada (recuou no depoimento). Todas foram superadas pelas provas técnicas.",
                 
-                "conclusao": "A materialidade e autoria estão solidamente comprovadas. O álibi dos réus foi desconstituído pelo GPS. O motivo torpe (silenciar denúncias) ficou evidente. Os executores foram condenados e investigamos os mandantes.",
+                "conclusao": "A materialidade e autoria estão solidamente comprovadas. O álibi do réu foi desconstituído pelo GPS. O motivo torpe (silenciar denúncias) ficou evidente. O executor foi condenado e não houve provas para indiciar mandantes.",
                 
                 "default": "Desculpe, não entendi sua pergunta. Pode reformular? Estou aqui para esclarecer sobre o caso do assassinato da vereadora Lívia Andrade."
             };
@@ -292,8 +292,8 @@
                     return knowledgeBase.provas;
                 } else if (userMessage.includes('sentença') || userMessage.includes('pena') || userMessage.includes('condenação') || userMessage.includes('julgamento')) {
                     return knowledgeBase.sentença;
-                } else if (userMessage.includes('mandante') || userMessage.includes('ordenou') || userMessage.includes('comando') || userMessage.includes('vereador') || userMessage.includes('marcelo')) {
-                    return knowledgeBase.mandantes;
+                } else if (userMessage.includes('pessoa') || userMessage.includes('envolvido')) {
+                    return knowledgeBase.pessoas;
                 } else if (userMessage.includes('detalhe') || userMessage.includes('como ocorreu') || userMessage.includes('crime')) {
                     return knowledgeBase.detalhes;
                 } else if (userMessage.includes('investigação') || userMessage.includes('obstrução') || userMessage.includes('dificuldade')) {
@@ -332,7 +332,10 @@
                 avatar.textContent = 'D';
                 
                 messageDiv.appendChild(avatar);
-                messageDiv.appendChild(document.createTextNode(message));
+                // Usar innerHTML para interpretar quebras de linha como <br>
+                const messageContent = document.createElement('span');
+                messageContent.innerHTML = message.replace(/\n/g, '<br>');
+                messageDiv.appendChild(messageContent);
                 
                 const timestamp = document.createElement('div');
                 timestamp.className = 'timestamp';
